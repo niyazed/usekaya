@@ -1,0 +1,6 @@
+.env
+*.db
+.DS_Store
+.venv
+
+data.xlsx
