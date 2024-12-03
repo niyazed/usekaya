@@ -10,7 +10,7 @@ from src.db.models import CampaignModel, AdGroupModel, AdGroupStatsModel
 engine = create_engine(url=settings.DATABASE_URL, 
                         echo=True, 
                         )
-def init_db() -> None:
+async def init_db() -> None:
     """Creates all database tables defined in SQLModel models."""
     SQLModel.metadata.create_all(engine)
 

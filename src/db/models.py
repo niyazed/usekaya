@@ -32,3 +32,4 @@ class AdGroupStatsModel(SQLModel, table=True):
     conversions: int
     cost: Decimal = Field(sa_type=Numeric(10, 2))
     ad_group: AdGroupModel = Relationship(back_populates="ad_group_stats")
+
