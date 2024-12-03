@@ -21,7 +21,7 @@ def get_campaigns(session: Session = Depends(get_session)):
     
     
 
-@router.patch("/campaigns/{campaign_id}")
+@router.patch("/campaigns")
 def update_campaign(campaign_id: str, campaign_name: str, session: Session = Depends(get_session)):
     try:
         return update_campaign_name(campaign_id, campaign_name, session)

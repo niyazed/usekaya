@@ -11,8 +11,8 @@ def _get_campaign_data(campaign) -> Dict:
         "campaign_type": campaign.campaign_type,
         "num_ad_groups": len(campaign.ad_groups),
         "ad_group_names": [group.ad_group_name for group in campaign.ad_groups],
-        "avg_monthly_cost": round(metrics["avg_monthly_cost"], 2),
-        "avg_cost_per_conversion": round(metrics["cost_per_conversion"], 2)
+        "avg_monthly_cost": metrics["avg_monthly_cost"],
+        "avg_cost_per_conversion": metrics["cost_per_conversion"]
     }
 
 
@@ -29,8 +29,8 @@ def _calculate_campaign_metrics(campaign) -> Dict:
     cost_per_conversion = total_cost / total_conversions if total_conversions > 0 else 0
     
     return {
-        "avg_monthly_cost": avg_monthly_cost,
-        "cost_per_conversion": cost_per_conversion
+        "avg_monthly_cost": round(avg_monthly_cost, 2),
+        "cost_per_conversion": round(cost_per_conversion, 2)
     }
 
 

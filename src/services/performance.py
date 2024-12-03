@@ -5,7 +5,7 @@ from sqlmodel import Session
 from sqlalchemy import func, text
 from src.db.models import AdGroupStatsModel, AdGroupModel, CampaignModel
 
-def get_performance_time_series(
+def get_performance_metrics(
     session: Session,
     aggregate_by: str,
     campaigns: Optional[List[int]] = None,
@@ -61,6 +61,7 @@ def get_performance_time_series(
         'month': 'YYYY-MM'
     }
     
+    # Group results by formatted date string using to_char() SQL function:
     query = query.group_by(func.to_char(text('date::date'), date_format[aggregate_by]))
 
     # Execute query and calculate metrics
@@ -91,3 +92,53 @@ def get_performance_time_series(
         
     
     return metrics
+
+
+
+def get_compare_performance(
+    session: Session,
+    start_date: date,
+    end_date: date,
+    compare_mode: str
+) -> Dict:
+    # Calculate comparison period dates
+    current_period_days = (end_date - start_date).days + 1
+
+    if compare_mode == "preceding":
+        compare_end = start_date.replace(day=start_date.day - 1)
+        compare_start = compare_end.replace(day=compare_end.day - current_period_days + 1)
+    else:  # previous_month
+        if start_date.month == 1:
+            compare_start = start_date.replace(year=start_date.year - 1, month=12)
+            compare_end = end_date.replace(year=end_date.year - 1, month=12)
+        else:
+            compare_start = start_date.replace(month=start_date.month - 1)
+            compare_end = end_date.replace(month=end_date.month - 1)
+
+    # Get metrics for both periods
+    current_metrics = get_performance_metrics(
+        session=session,
+        aggregate_by="day",
+        start_date=str(start_date),
+        end_date=str(end_date)
+    )
+    
+    compare_metrics = get_performance_metrics(
+        session=session,
+        aggregate_by="day",
+        start_date=str(compare_start),
+        end_date=str(compare_end)
+    )
+
+    return {
+        "current_period": {
+            "start_date": start_date,
+            "end_date": end_date,
+            "metrics": current_metrics
+        },
+        "comparison_period": {
+            "start_date": compare_start,
+            "end_date": compare_end,
+            "metrics": compare_metrics
+        }
+    }

@@ -12,6 +12,9 @@ class FilterParams(BaseModel):
     end_date: Optional[str] = None
 
 class PerformanceTimeSeries(BaseModel):
+    """
+    Response schema for performance time series data
+    """
     total_cost: float
     total_clicks: int
     total_conversions: int
