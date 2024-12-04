@@ -1,12 +1,38 @@
 from src.db.models import CampaignModel
-from sqlmodel import Session
+from sqlmodel import Session, select
 from typing import Dict
+from src.utils.logger import logger
+
+# Main public functions
+def get_campaign_metrics(session: Session):
+    """
+    Return all campaigns and their metrics
+    """
+    logger.info("Getting campaign metrics")
+    campaigns = session.exec(select(CampaignModel)).all()
+    return [_get_campaign_data(campaign) for campaign in campaigns]
 
 
+def update_campaign_name(campaign_id: int, campaign_name: str, session: Session):
+    """
+    Update the name of a campaign
+    """
+    logger.info(f"Updating campaign name to {campaign_name} for campaign ID {campaign_id}")
+    campaign = session.query(CampaignModel).filter(CampaignModel.campaign_id == campaign_id).first()
+    if not campaign:
+        raise ValueError(f"Campaign with ID {campaign_id} not found")
+    campaign.campaign_name = campaign_name
+    session.commit()
+    logger.info(f"Campaign name updated to {campaign_name} for campaign ID {campaign_id}")
+    return {"message": "Campaign updated successfully", "campaign_id": campaign_id}
+
+
+# Private helper functions
 def _get_campaign_data(campaign) -> Dict:
     """
     Return campaign data including metrics
     """
+    logger.info(f"Calculating campaign metrics for campaign ID {campaign.campaign_id}")
     metrics = _calculate_campaign_metrics(campaign)
     return {
         "campaign_id": campaign.campaign_id,
@@ -42,6 +68,7 @@ def _calculate_campaign_metrics(campaign) -> Dict:
     avg_monthly_cost = total_cost / 12 if total_cost > 0 else 0
     cost_per_conversion = total_cost / total_conversions if total_conversions > 0 else 0
     
+    logger.info(f"Calculated campaign metrics for campaign ID {campaign.campaign_id}")
     return {
         "avg_monthly_cost": round(avg_monthly_cost, 2),
         "cost_per_conversion": round(cost_per_conversion, 2)
@@ -49,21 +76,3 @@ def _calculate_campaign_metrics(campaign) -> Dict:
 
 
 
-def get_campaign_metrics(session: Session):
-    """
-    Return all campaigns and their metrics
-    """
-    campaigns = session.query(CampaignModel).all()
-    return [_get_campaign_data(campaign) for campaign in campaigns]
-
-
-def update_campaign_name(campaign_id: str, campaign_name: str, session: Session):
-    """
-    Update the name of a campaign
-    """
-    campaign = session.query(CampaignModel).filter(CampaignModel.campaign_id == campaign_id).first()
-    if not campaign:
-        raise ValueError(f"Campaign with ID {campaign_id} not found")
-    campaign.campaign_name = campaign_name
-    session.commit()
-    return {"message": "Campaign updated successfully", "campaign_id": campaign_id}

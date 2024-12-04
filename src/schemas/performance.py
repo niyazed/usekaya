@@ -15,6 +15,7 @@ class PerformanceTimeSeries(BaseModel):
     """
     Response schema for performance time series data
     """
+    date: str
     total_cost: float
     total_clicks: int
     total_conversions: int
