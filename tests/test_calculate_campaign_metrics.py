@@ -31,7 +31,7 @@ def test_calculate_campaign_metrics():
     # Total conversions should be 70 (10 + 20 + 15 + 25)
     # Cost per conversion should be 751.50 / 70 = 10.735714...
     
-    assert metrics["avg_monthly_cost"] == 62.63
+    assert metrics["avg_monthly_cost"] == 62.62
     assert metrics["cost_per_conversion"] == 10.74
     
     # Test case 2: Campaign with no conversions

@@ -95,12 +95,23 @@ def get_performance_metrics(
 
 
 
-def get_compare_performance(
+def get_performance_comparison(
     session: Session,
     start_date: date,
     end_date: date,
     compare_mode: str
 ) -> Dict:
+    """
+    Compare performance metrics between two periods
+    
+    Args:
+        session: SQLModel database session
+        start_date: Start date for the current period
+        end_date: End date for the current period
+        compare_mode: Mode for comparison - must be 'preceding' or 'previous_month'
+    Returns:
+        Dict: Dictionary containing current and comparison period metrics
+    """
     # Calculate comparison period dates
     current_period_days = (end_date - start_date).days + 1
 
@@ -132,13 +143,13 @@ def get_compare_performance(
 
     return {
         "current_period": {
-            "start_date": start_date,
-            "end_date": end_date,
+            "start_date": str(start_date),
+            "end_date": str(end_date),
             "metrics": current_metrics
         },
         "comparison_period": {
-            "start_date": compare_start,
-            "end_date": compare_end,
+            "start_date": str(compare_start),
+            "end_date": str(compare_end),
             "metrics": compare_metrics
         }
     }

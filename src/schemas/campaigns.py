@@ -2,6 +2,9 @@ from pydantic import BaseModel
 from typing import List
 
 class CampaignMetrics(BaseModel):
+    """
+    Response schema for campaign metrics
+    """
     campaign_id: int
     campaign_name: str
     campaign_type: str

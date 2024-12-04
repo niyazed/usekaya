@@ -7,23 +7,25 @@ from typing import Annotated
 
 from src.db.database import get_session
 from src.services.performance import get_performance_metrics
-from src.schemas.performance import FilterParams, PerformanceTimeSeries
-from src.services.performance import get_compare_performance
+from src.schemas.performance import FilterParams, PerformanceTimeSeries, ComparePerformance
+from src.services.performance import get_performance_comparison
 
 router = APIRouter()
 
 
-# @router.get("/performance-time-series", response_model=List[PerformanceTimeSeries])
-@router.get("/performance-time-series")
+@router.get("/performance-time-series", response_model=List[PerformanceTimeSeries])
 def performance_time_series(
     filter_params: Annotated[FilterParams, Query()],
     session: Session = Depends(get_session)
 ):
+    """
+    Get performance metrics for a given period
+    """
     try:
         if filter_params.aggregate_by not in ["day", "week", "month"]:
             return {"error": "aggregate_by must be one of: day, week, month", "status": "error"}, 400
         
-        if filter_params.start_date > filter_params.end_date:
+        if (filter_params.start_date and filter_params.end_date) and filter_params.start_date > filter_params.end_date:
             return {"error": "start_date must be before or equal to end_date", "status": "error"}, 400
             
         return get_performance_metrics(
@@ -46,17 +48,16 @@ def performance_time_series(
 
 
 
-
-
-
-
-@router.get("/compare-performance")
+@router.get("/compare-performance", response_model=ComparePerformance)
 def compare_performance(
     start_date: date,
     end_date: date,
     compare_mode: str,
     session: Session = Depends(get_session)
 ):
+    """
+    Compare performance metrics between two periods
+    """
     try:
         if compare_mode not in ["preceding", "previous_month"]:
             return {"error": "compare_mode must be either 'preceding' or 'previous_month'", "status": "error"}, 400
@@ -64,7 +65,7 @@ def compare_performance(
         if start_date > end_date:
             return {"error": "start_date must be before or equal to end_date", "status": "error"}, 400
         
-        return get_compare_performance(
+        return get_performance_comparison(
             session=session,
             start_date=start_date,
             end_date=end_date,

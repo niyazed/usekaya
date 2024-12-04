@@ -8,6 +8,9 @@ router = APIRouter()
 
 @router.get("/campaigns", response_model=List[CampaignMetrics])
 def get_campaigns(session: Session = Depends(get_session)):
+    """
+    Get all campaigns and their metrics
+    """
     try:
         return get_campaign_metrics(session)
     except Exception as e:
@@ -23,6 +26,9 @@ def get_campaigns(session: Session = Depends(get_session)):
 
 @router.patch("/campaigns")
 def update_campaign(campaign_id: str, campaign_name: str, session: Session = Depends(get_session)):
+    """
+    Update the name of a campaign
+    """
     try:
         return update_campaign_name(campaign_id, campaign_name, session)
     except Exception as e:

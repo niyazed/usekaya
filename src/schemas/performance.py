@@ -22,3 +22,17 @@ class PerformanceTimeSeries(BaseModel):
     avg_cost_per_conversion: float
     avg_click_through_rate: float
     avg_conversion_rate: float
+
+
+
+class ComparePerformance(BaseModel):
+    """
+    Response schema for compare performance data
+    """
+    class Period(BaseModel):
+        start_date: str
+        end_date: str
+        metrics: List[PerformanceTimeSeries]
+
+    current_period: Period
+    comparison_period: Period
