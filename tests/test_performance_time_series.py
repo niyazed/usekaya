@@ -1,9 +1,6 @@
-from fastapi.testclient import TestClient
-from src.app import app
+from .conftest import client
 
-client = TestClient(app)
-
-def test_get_performance_time_series():
+def test_get_performance_time_series(client):
     params = {"aggregate_by": "day"}
     response = client.get("/api/v1/performance-time-series", params=params)
     assert response.status_code == 200

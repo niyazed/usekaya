@@ -1,10 +1,6 @@
-from fastapi.testclient import TestClient
-from src.app import app
+from .conftest import client
 
-client = TestClient(app)
-
-
-def test_get_campaigns_response_structure():
+def test_get_campaigns_response_structure(client):
     response = client.get("/api/v1/campaigns")
     data = response.json()
     

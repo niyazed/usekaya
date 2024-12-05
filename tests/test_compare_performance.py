@@ -1,9 +1,7 @@
-from fastapi.testclient import TestClient
-from src.app import app
+from .conftest import client
 
-client = TestClient(app)
 
-def test_get_compare_performance():
+def test_get_compare_performance(client):
     params = {"start_date": "2024-09-15", "end_date": "2024-09-17", "compare_mode": "preceding"}
     response = client.get("/api/v1/compare-performance", params=params)
     assert response.status_code == 200

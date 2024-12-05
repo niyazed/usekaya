@@ -1,9 +1,6 @@
-from fastapi.testclient import TestClient
-from src.app import app
+from .conftest import client
 
-client = TestClient(app)
-
-def test_update_campaign():
+def test_update_campaign(client):
     params = {"campaign_id": 18301866406, "campaign_name": "Testing"}
     response = client.patch("/api/v1/campaigns", params=params)
     assert response.status_code == 200
@@ -14,7 +11,7 @@ def test_update_campaign():
     params = {"campaign_id": 18301866406, "campaign_name": "Clothing"}
     response = client.patch("/api/v1/campaigns", params=params)
     
-def test_update_campaign_error():
+def test_update_campaign_error(client):
     params = {"campaign_id": 18301866405, "campaign_name": "Testing"}
     response = client.patch("/api/v1/campaigns", params=params)
     assert response.status_code == 404
