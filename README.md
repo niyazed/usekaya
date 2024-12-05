@@ -5,19 +5,19 @@
 
 ### Prerequisites
 - Python 3.10.15
-- Docker (optional)
-- PostgreSQL database (a remote connection string is provided in .env)
+- Docker
+- PostgreSQL database [https://neon.tech/]
 
-### Installation
-
+### Installation & Running
 1. Clone the repository
-2. Install dependencies
+2. Set up environment variables (Copy .env.example to .env and set the variables)
+    - `DATABASE_URL` will be provided
+3. Build the Docker image
 ```bash
-pip install -r requirements.txt
+docker build -t usekaya:latest .
 ```
-3. Set up environment variables (see .env.example)
-4. Create a new virtual environment (conda, uv etc.)
-5. Run the application
+4. Run the Docker container
 ```bash
-fastapi run src/app.py
+docker run --name kaya-container -p 8000:8000 --env-file .env usekaya:latest
 ```
+

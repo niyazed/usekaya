@@ -50,7 +50,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
           tags: |
             niyazed/usekaya:latest
