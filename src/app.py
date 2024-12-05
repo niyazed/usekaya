@@ -34,6 +34,11 @@ def status() -> dict:
     return {"status": "ok"}
 
 
+@app.head("/healthz")
+def healthcheck() -> dict:
+    logger.info("Healthcheck endpoint called")
+    return {"status": "ok"}
+
 # Include routers here
 app.include_router(campaigns.router, prefix="/api/v1", tags=["campaigns"])
 app.include_router(performance.router, prefix="/api/v1", tags=["performance"])
