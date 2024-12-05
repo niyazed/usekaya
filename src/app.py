@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
@@ -5,12 +6,14 @@ from src.routers import campaigns, performance
 from src.db.database import init_db
 from src.utils.logger import logger
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Initializing database...")
     await init_db()
     yield
     logger.info("Closing database connection...")
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -29,6 +32,7 @@ app.add_middleware(
 def status() -> dict:
     logger.info("Status endpoint called")
     return {"status": "ok"}
+
 
 # Include routers here
 app.include_router(campaigns.router, prefix="/api/v1", tags=["campaigns"])
