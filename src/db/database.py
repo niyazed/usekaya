@@ -6,8 +6,16 @@ from typing import Generator
 from src.config.settings import settings
 from src.db.models import CampaignModel, AdGroupModel, AdGroupStatsModel
 
-
+'''
+engines = {
+    'master': create_engine('postgresql://user:***@localhost:5432/master',
+                            logging_name='master'),
+    'replica': create_engine('postgresql://user:***@localhost:5432/replica',
+                             logging_name='replica'),
+}
+'''
 engine = create_engine(url=settings.DATABASE_URL)
+
 async def init_db() -> None:
     """Creates all database tables defined in SQLModel models."""
     SQLModel.metadata.create_all(engine)

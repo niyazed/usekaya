@@ -13,15 +13,16 @@
 2. Set up environment variables (Copy .env.example to .env and set the variables)
     - `DATABASE_URL` will be provided
 3. Build the Docker image
-```bash
-docker build -t usekaya:latest .
-```
+    ```bash
+    docker build -t usekaya:latest .
+    ```
 4. Run the Docker container
-```bash
-docker run --name kaya-container -p 8000:8000 --env-file .env usekaya:latest
-```
-
+    ```bash
+    docker run --name kaya-container -p 8000:8000 --env-file .env usekaya:latest
+    ```
+----
 ### Running the tests
+Run the following command to run the tests
 ```bash
 pytest
 ```
@@ -39,7 +40,7 @@ pytest
 8. Setup Render Webhook to trigger on push to Github (Automatic Deployment)
 9. Copy the URL and done.
 ```
-------------------------------------------
+
 
 ### AWS Architecture
 ![AWS Architecture](./docs/aws.png)
@@ -59,3 +60,4 @@ pytest
 - Integrate https://oneuptime.com/ for logging, monitoring and alerting
 - Setup pre-commit hooks
 - Improve tests
+- API Authentication

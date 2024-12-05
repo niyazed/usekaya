@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from typing import List, Optional, Dict
 from datetime import date
 from fastapi import Depends, Query
@@ -10,13 +10,16 @@ from src.services.performance import get_performance_metrics
 from src.schemas.performance import FilterParams, PerformanceTimeSeries, ComparePerformance
 from src.services.performance import get_performance_comparison
 from src.utils.logger import logger
+from src.utils.rate_limiter import limiter
 
 
 router = APIRouter()
 
 
-@router.get("/performance-time-series", response_model=List[PerformanceTimeSeries])
+@router.get("/performance-time-series", response_model=List[PerformanceTimeSeries]) 
+@limiter.limit("5/minute")
 def performance_time_series(
+    request: Request,
     filter_params: Annotated[FilterParams, Query()],
     session: Session = Depends(get_session)
 ):
@@ -71,8 +74,10 @@ def performance_time_series(
 
 
 
-@router.get("/compare-performance", response_model=ComparePerformance)
+@router.get("/compare-performance", response_model=ComparePerformance)      
+@limiter.limit("5/minute")
 def compare_performance(
+    request: Request,
     start_date: date,
     end_date: date,
     compare_mode: str,

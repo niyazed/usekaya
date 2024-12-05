@@ -1,10 +1,13 @@
-import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
 from src.routers import campaigns, performance
 from src.db.database import init_db
 from src.utils.logger import logger
+from src.utils.rate_limiter import limiter
 
 
 @asynccontextmanager
@@ -15,8 +18,12 @@ async def lifespan(app: FastAPI):
     logger.info("Closing database connection...")
 
 
+# Main FastAPI Application
 app = FastAPI(lifespan=lifespan)
 
+# Add rate limiting middleware
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Add CORS middleware
 app.add_middleware(
@@ -29,7 +36,8 @@ app.add_middleware(
 
 
 @app.get("/")
-def status() -> dict:
+@limiter.limit("5/minute")
+def status(request: Request) -> dict:
     logger.info("Status endpoint called")
     return {"status": "ok"}
 
