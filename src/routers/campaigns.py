@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import Dict, List
 from sqlmodel import Session
+from fastapi_cache.decorator import cache
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 
 from src.db.database import get_session
@@ -8,11 +9,12 @@ from src.services.campaigns import get_campaign_metrics, update_campaign_name
 from src.schemas.campaigns import CampaignMetrics
 from src.utils.logger import logger
 from src.utils.rate_limiter import limiter
-
+from src.config.settings import settings
 router = APIRouter()
 
 @router.get("/campaigns", response_model=List[CampaignMetrics])
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
+@cache(expire=settings.CACHE_TTL_SECONDS)
 def get_campaigns(request: Request, session: Session = Depends(get_session)):
     """
     Get all campaigns and their metrics
@@ -35,7 +37,8 @@ def get_campaigns(request: Request, session: Session = Depends(get_session)):
     
 
 @router.patch("/campaigns")
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
+@cache(expire=settings.CACHE_TTL_SECONDS)
 def update_campaign(request: Request, campaign_id: int, campaign_name: str, session: Session = Depends(get_session)):
     """
     Update the name of a campaign

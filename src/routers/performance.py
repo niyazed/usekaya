@@ -4,6 +4,7 @@ from datetime import date
 from fastapi import Depends, Query
 from sqlmodel import Session
 from typing import Annotated
+from fastapi_cache.decorator import cache
 
 from src.db.database import get_session
 from src.services.performance import get_performance_metrics
@@ -11,13 +12,14 @@ from src.schemas.performance import FilterParams, PerformanceTimeSeries, Compare
 from src.services.performance import get_performance_comparison
 from src.utils.logger import logger
 from src.utils.rate_limiter import limiter
-
+from src.config.settings import settings
 
 router = APIRouter()
 
 
 @router.get("/performance-time-series", response_model=List[PerformanceTimeSeries]) 
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
+@cache(expire=settings.CACHE_TTL_SECONDS)
 def performance_time_series(
     request: Request,
     filter_params: Annotated[FilterParams, Query()],
@@ -75,7 +77,8 @@ def performance_time_series(
 
 
 @router.get("/compare-performance", response_model=ComparePerformance)      
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
+@cache(expire=settings.CACHE_TTL_SECONDS)
 def compare_performance(
     request: Request,
     start_date: date,

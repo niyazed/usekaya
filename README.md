@@ -11,7 +11,9 @@
 ### Installation & Running (Locally)
 1. Clone the repository
 2. Set up environment variables (Copy .env.example to .env and set the variables)
-    - `DATABASE_URL` will be provided
+    - `MASTER_DATABASE_URL` and `REPLICA_DATABASE_URL` will be provided
+    - `REDIS_URL` will be provided
+    - `CACHE_TTL_SECONDS` is the time to live for the cache in seconds
 3. Build the Docker image
     ```bash
     docker build -t usekaya:latest .

@@ -1,19 +1,29 @@
 from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
+
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+
 
 from src.routers import campaigns, performance
 from src.db.database import init_db
 from src.utils.logger import logger
 from src.utils.rate_limiter import limiter
+from src.config.settings import settings
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     logger.info("Initializing database...")
     await init_db()
+    logger.info("Initializing Redis...")
+    redis = await aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    logger.info("Redis initialization complete")
     yield
     logger.info("Closing database connection...")
 
