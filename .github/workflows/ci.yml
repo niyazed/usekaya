@@ -8,7 +8,8 @@ on:
       - main
 
 env:
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  MASTER_DATABASE_URL: ${{ secrets.MASTER_DATABASE_URL }}
+  REPLICA_DATABASE_URL: ${{ secrets.REPLICA_DATABASE_URL }}
 
 jobs:
   test:
@@ -27,8 +28,6 @@ jobs:
           pip install -r requirements.txt
 
       - name: Test with pytest
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           pytest
 
@@ -50,7 +49,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
           tags: |
             niyazed/usekaya:latest
