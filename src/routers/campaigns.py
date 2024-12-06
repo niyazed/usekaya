@@ -10,6 +10,7 @@ from src.schemas.campaigns import CampaignMetrics
 from src.utils.logger import logger
 from src.utils.rate_limiter import limiter
 from src.config.settings import settings
+
 router = APIRouter()
 
 @router.get("/campaigns", response_model=List[CampaignMetrics])
@@ -38,7 +39,6 @@ def get_campaigns(request: Request, session: Session = Depends(get_session)):
 
 @router.patch("/campaigns")
 @limiter.limit("10/minute")
-@cache(expire=settings.CACHE_TTL_SECONDS)
 def update_campaign(request: Request, campaign_id: int, campaign_name: str, session: Session = Depends(get_session)):
     """
     Update the name of a campaign

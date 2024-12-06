@@ -2,11 +2,20 @@
 
 
 ## Getting Started
+The API features a clean separation of concerns (SoC), utilizes a master/read-replica database setup, implements rate limiting for API protection, integrates CI/CD through GitHub Actions with Dockerhub and Render deployment, and employs caching for improved performance.
 
 ### Prerequisites
 - Python 3.10.15
 - Docker
 - PostgreSQL database [https://neon.tech/]
+
+### Database Configuration
+Configured PostgreSQL database in Neon.tech as shown below
+![Database Configuration](./docs/database.png)
+
+### Redis Configuration
+Configured Redis in AWS as shown below
+![Redis Configuration](./docs/redis.png)
 
 ### Installation & Running (Locally)
 1. Clone the repository
@@ -58,8 +67,13 @@ pytest
 ```
 
 ------------------------------------------
-### Things to improve
+### Things to do if have more time
 - Integrate https://oneuptime.com/ for logging, monitoring and alerting
 - Setup pre-commit hooks
 - Improve tests
-- API Authentication
+- API Authentication (If needed, otherwise it will be handled in the API Gateway)
+- Analytics Dashboard
+
+
+### Assumptions
+There are so many possible ways to implement the API, so it depends on the requirements and constraints.
